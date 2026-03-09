@@ -1,51 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>A/B test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A/B-тест</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 0 20px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 24px;
+      font-size: 18px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #debug {
+      margin-top: 24px;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
 </head>
-
 <body>
+  <h1 id="title"></h1>
+  <p id="description"></p>
 
-<h1 id="title"></h1>
-<button id="btn">Хорошо!</button>
+  <div class="buttons">
+    <button id="yesBtn">Хорошо</button>
+    <button id="noBtn">Нет</button>
+  </div>
 
-<script>
+  <div id="debug"></div>
 
-const api = "https://script.google.com/macros/s/AKfycbymefRIQt-A3FP7TJ3xz1HXXzFJTg9lODnMFVWyXBN8NqFH9UzVeRjomZ_2wrhcZA8q/exec";
+  <script>
+    // Вставьте сюда URL вашего Apps Script
+    const api = "URL_APPS_SCRIPT";
 
-let variant = localStorage.getItem("variant");
+    // Случайный выбор варианта при каждой загрузке
+    const variant = Math.random() < 0.5 ? "A" : "B";
 
-if (!variant) {
-  variant = Math.random() < 0.5 ? "A" : "B";
-  localStorage.setItem("variant", variant);
-}
+    const title = document.getElementById("title");
+    const description = document.getElementById("description");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const debug = document.getElementById("debug");
 
-if (variant === "A") {
-  document.getElementById("title").innerText =
-    "Запишитесь на курс";
-} else {
-  document.getElementById("title").innerText =
-    "Попробуйте курс бесплатно";
-}
+    // Контент вариантов
+    if (variant === "A") {
+      title.textContent = "Запишитесь на курс";
+      description.textContent = "Освойте основы медиаметрии и научитесь анализировать данные.";
+    } else {
+      title.textContent = "Попробуйте курс бесплатно";
+      description.textContent = "Получите первое представление о медиаметрии и решите, подходит ли вам курс.";
+    }
 
-send("view");
+    debug.textContent = "Текущий вариант: " + variant;
 
-document.getElementById("btn").onclick = () => {
-  send("click");
-};
+    // Функция отправки события
+    function sendEvent(eventName) {
+      fetch(api, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          variant: variant,
+          event: eventName,
+          page: window.location.href,
+          userAgent: navigator.userAgent,
+          time: new Date().toISOString()
+        })
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log("Событие отправлено:", eventName, variant, data);
+      })
+      .catch(error => {
+        console.error("Ошибка отправки:", error);
+      });
+    }
 
-function send(event) {
-  fetch(api, {
-    method: "POST",
-    body: JSON.stringify({
-      variant: variant,
-      event: event
-    })
-  });
-}
+    // Можно учитывать показ страницы
+    sendEvent("view");
 
-</script>
+    // Кнопка "Хорошо" — идет в статистику
+    yesBtn.addEventListener("click", function () {
+      sendEvent("good_click");
+      alert("Спасибо! Ваш ответ учтен.");
+    });
 
+    // Кнопка "Нет" — просто перезагрузка страницы
+    noBtn.addEventListener("click", function () {
+      location.reload();
+    });
+  </script>
 </body>
 </html>
