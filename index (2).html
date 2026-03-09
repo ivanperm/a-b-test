@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>A/B test</title>
+</head>
+
+<body>
+
+<h1 id="title"></h1>
+<button id="btn">Нажать</button>
+
+<script>
+
+const api = "URL_APPS_SCRIPT";
+
+let variant = localStorage.getItem("variant");
+
+if (!variant) {
+  variant = Math.random() < 0.5 ? "A" : "B";
+  localStorage.setItem("variant", variant);
+}
+
+if (variant === "A") {
+  document.getElementById("title").innerText =
+    "Запишитесь на курс";
+} else {
+  document.getElementById("title").innerText =
+    "Попробуйте курс бесплатно";
+}
+
+send("view");
+
+document.getElementById("btn").onclick = () => {
+  send("click");
+};
+
+function send(event) {
+  fetch(api, {
+    method: "POST",
+    body: JSON.stringify({
+      variant: variant,
+      event: event
+    })
+  });
+}
+
+</script>
+
+</body>
+</html>
