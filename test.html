@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A/B/C/D тест — квартира</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0 0 14px 0;
+      font-size: 34px;
+      line-height: 1.15;
+    }
+
+    #description {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #333;
+      white-space: pre-line;
+      margin-bottom: 22px;
+    }
+
+    .facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .fact {
+      background: #eef2f7;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 14px 22px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    #yesBtn {
+      background: #2563eb;
+      color: #fff;
+    }
+
+    #noBtn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .layout-split {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .frame {
+      border: 2px solid #d1d5db;
+      padding: 20px;
+      border-radius: 14px;
+      background: #fcfcfd;
+    }
+
+    .compact h1 {
+      font-size: 28px;
+    }
+
+    .compact #description {
+      font-size: 16px;
+    }
+
+    #debug {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 700px) {
+      .layout-split {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .hero-image {
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div id="card" class="card">
+      <div id="content"></div>
+
+      <div class="buttons">
+        <button id="yesBtn">Хорошо</button>
+        <button id="noBtn">Нет</button>
+      </div>
+
+      <div id="debug"></div>
+    </div>
+  </div>
+
+  <script>
+    const api = "https://script.google.com/macros/s/AKfycbykogCS4kziCTJFv9EzexV-gw_3EeLPXNpseRau_K-RCigN5vgBYo7SyKlZhEM4JbFZqg/exec";
+
+    const variants = ["A", "B", "C", "D"];
+    const variant = variants[Math.floor(Math.random() * variants.length)];
+
+    const content = document.getElementById("content");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const debug = document.getElementById("debug");
+    const card = document.getElementById("card");
+
+    const imageUrl = "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80";
+
+    function renderFacts() {
+      return `
+        <div class="facts">
+          <div class="fact">54 м²</div>
+          <div class="fact">2 комнаты</div>
+          <div class="fact">6 этаж</div>
+          <div class="fact">Кухня 11 м²</div>
+          <div class="fact">Балкон</div>
+        </div>
+      `;
+    }
+
+    if (variant === "A") {
+      content.innerHTML = `
+        <div class="eyebrow">Вариант A · нейтральный</div>
+        <h1>Продаётся двухкомнатная квартира 54 м²</h1>
+        <div id="description">
+Квартира расположена на 6 этаже 10-этажного дома.
+Общая площадь — 54 м², кухня — 11 м², комнаты изолированные.
+
+В квартире сделан косметический ремонт, установлены пластиковые окна, есть застеклённый балкон.
+
+Дом расположен в районе с развитой инфраструктурой: рядом школа, детский сад, магазины и остановка транспорта.
+
+Подходит для семьи или сдачи в аренду.
+        </div>
+        ${renderFacts()}
+      `;
+      document.body.style.background = "#f4f6f8";
+      card.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
+      yesBtn.style.background = "#2563eb";
+      yesBtn.style.color = "#fff";
+    }
+
+    else if (variant === "B") {
+      content.innerHTML = `
+        <div class="eyebrow">Вариант B · акцент на кнопке</div>
+        <h1>Продаётся двухкомнатная квартира 54 м²</h1>
+        <div id="description">
+Квартира расположена на 6 этаже 10-этажного дома.
+Общая площадь — 54 м², кухня — 11 м², комнаты изолированные.
+
+В квартире сделан косметический ремонт, установлены пластиковые окна, есть застеклённый балкон.
+
+Дом расположен в районе с развитой инфраструктурой: рядом школа, детский сад, магазины и остановка транспорта.
+
+Подходит для семьи или сдачи в аренду.
+        </div>
+        ${renderFacts()}
+      `;
+      document.body.style.background = "#f7fafc";
+      yesBtn.style.background = "#16a34a";
+      yesBtn.style.color = "#fff";
+      noBtn.style.background = "#d1d5db";
+    }
+
+    else if (variant === "C") {
+      content.innerHTML = `
+        <div class="eyebrow">Вариант C · с изображением</div>
+        <img class="hero-image" src="${imageUrl}" alt="Интерьер квартиры" />
+        <h1>Продаётся двухкомнатная квартира 54 м²</h1>
+        <div id="description">
+Квартира расположена на 6 этаже 10-этажного дома.
+Общая площадь — 54 м², кухня — 11 м², комнаты изолированные.
+
+В квартире сделан косметический ремонт, установлены пластиковые окна, есть застеклённый балкон.
+
+Дом расположен в районе с развитой инфраструктурой: рядом школа, детский сад, магазины и остановка транспорта.
+
+Подходит для семьи или сдачи в аренду.
+        </div>
+        ${renderFacts()}
+      `;
+      document.body.style.background = "#eef6ff";
+      yesBtn.style.background = "#2563eb";
+      yesBtn.style.color = "#fff";
+    }
+
+    else {
+      content.innerHTML = `
+        <div class="eyebrow">Вариант D · карточка и разделение на блоки</div>
+        <div class="layout-split compact">
+          <div>
+            <div class="badge">Готова к просмотру</div>
+            <h1>Продаётся двухкомнатная квартира 54 м²</h1>
+            <div id="description">
+Квартира на 6 этаже 10-этажного дома.
+Изолированные комнаты, кухня 11 м², застеклённый балкон.
+
+Рядом школа, детский сад, магазины и остановка транспорта.
+
+Подходит для семьи или сдачи в аренду.
+            </div>
+          </div>
+          <div class="frame">
+            <img class="hero-image" style="height:220px; margin-bottom:16px;" src="${imageUrl}" alt="Интерьер квартиры" />
+            ${renderFacts()}
+          </div>
+        </div>
+      `;
+      document.body.style.background = "#f8fafc";
+      yesBtn.style.background = "#7c3aed";
+      yesBtn.style.color = "#fff";
+    }
+
+    debug.textContent = "Текущий вариант: " + variant;
+
+    function sendEvent(eventName) {
+      fetch(api, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          variant: variant,
+          event: eventName,
+          page: window.location.href,
+          userAgent: navigator.userAgent,
+          time: new Date().toISOString()
+        })
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log("Отправлено:", eventName, variant, data);
+      })
+      .catch(error => {
+        console.error("Ошибка отправки:", error);
+      });
+    }
+
+    sendEvent("view");
+
+    yesBtn.addEventListener("click", function () {
+      sendEvent("good_click");
+      alert("Спасибо! Ваш ответ учтён.");
+    });
+
+    noBtn.addEventListener("click", function () {
+      location.reload();
+    });
+  </script>
+</body>
+</html>
